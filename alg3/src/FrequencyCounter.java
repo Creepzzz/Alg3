@@ -4,7 +4,7 @@ public class FrequencyCounter {
 
     public static int distinct = 0;
     public static int distinct2 = 0;
-    public static int N = 1;
+    public static int N = 10;
     public static int numberOfWords = 0;
     public static int numberOfWords2 = 0;
     public static int pos = 0;
@@ -57,7 +57,7 @@ public class FrequencyCounter {
             String key = scanner.next();
             numberOfWords2++;
             if(bst.contains(key)){
-                bst.put(key, bst.get(key));
+                bst.put(key, bst.get(key)+1);
             }
             else {
                 bst.put(key, 1);

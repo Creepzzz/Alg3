@@ -41,7 +41,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         if(key == null){
             throw new IllegalArgumentException();
         }
-        return get(root, key) != null;
+        return get(key) != null;
     }
 
     public Value get(Key key) {
@@ -78,23 +78,22 @@ public class BST<Key extends Comparable<Key>, Value> {
         root = put(root, key, value);
     }
 
-    private Node put(Node r, Key key, Value value){
-        if(r == null){
+    private Node put(Node n, Key key, Value value){
+        if(n == null){
             return new Node(key, value, 1);
         }
-        int compare = key.compareTo(r.key);
+        int compare = key.compareTo(n.key);
         if(compare < 0){
-            r.left = put(r.left, key, value);
+            n.left = put(n.left, key, value);
         }
         else if(compare > 0){
-            r.right= put(r.right, key, value);
+            n.right= put(n.right, key, value);
         }
         else {
-            r.value = value;
+            n.value = value;
         }
-        r.size = 1 + size(r.left) + size(r.right);
-        return r;
+        n.size = 1 + size(n.left) + size(n.right);
+        return n;
     }
-
 
 }
