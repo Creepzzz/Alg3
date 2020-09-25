@@ -1,3 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class BST<Key extends Comparable<Key>, Value> {
     private Node root;
 
@@ -94,6 +98,28 @@ public class BST<Key extends Comparable<Key>, Value> {
         }
         n.size = 1 + size(n.left) + size(n.right);
         return n;
+    }
+
+    public static void main(String[]args) throws FileNotFoundException {
+        BST<String, Integer> bst = new BST<>();
+        File myFile = new File("C:\\Users\\matil\\source\\repos\\Alg3\\Alg3\\alg3.5.txt");
+        Scanner scanner = new Scanner(myFile);
+        while(scanner.hasNext()){
+            String s = scanner.next();
+            System.out.print(s);
+            bst.put(s, (int)s.charAt(0));
+            System.out.println(bst.get(s));
+        }
+
+        int i = 65;
+           while (i < 88){
+            while (bst.get(Character.toString((char) i)) == null || i > 88) {
+                i++;
+            }
+            int n = bst.get(Character.toString((char) i));
+            System.out.print((char) n);
+            i++;
+        }
     }
 
 }

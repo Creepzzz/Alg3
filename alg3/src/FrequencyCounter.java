@@ -1,23 +1,26 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class FrequencyCounter {
 
     public static int distinct = 0;
     public static int distinct2 = 0;
-    public static int N = 10;
+    public static int N = 5;
     public static int numberOfWords = 0;
     public static int numberOfWords2 = 0;
     public static int pos = 0;
     public static int pos2 = 0;
-    public static Scanner scanner = new Scanner(System.in);
     public static String[] input = new String[N *100];
 
-    private FrequencyCounter(){
+
+    private FrequencyCounter() {
     }
-    private static long BSSTTime(){
+    private static long BSSTTime() throws FileNotFoundException {
 
         BinarySearchST<String, Integer> st = new BinarySearchST<>();
-
+        File myFile = new File("C:\\Users\\matil\\source\\repos\\Alg3\\Alg3\\destAlg3.txt");
+        Scanner scanner = new Scanner(myFile);
 
         long time1 = System.nanoTime();
         while (scanner.hasNext() && numberOfWords < N*100){
@@ -49,9 +52,11 @@ public class FrequencyCounter {
         return time1;
     }
 
-    private static long BSTTime(){
+    private static long BSTTime() throws FileNotFoundException {
         BST<String, Integer> bst = new BST<>();
         long time2 = System.nanoTime();
+        File myFile = new File("C:\\Users\\matil\\source\\repos\\Alg3\\Alg3\\destAlg3.txt");
+        Scanner scanner = new Scanner(myFile);
 
         while (scanner.hasNext() && numberOfWords2 < N*100){
             String key = scanner.next();
@@ -82,11 +87,9 @@ public class FrequencyCounter {
         return time2;
     }
 
-
-
-    public static void main(String[]args){
-        //long time1 = BSSTTime();
-        //System.out.println(time1);
+    public static void main(String[]args) throws FileNotFoundException {
+        long time1 = BSSTTime();
+        System.out.println(time1);
         long time2 = BSTTime();
         System.out.println(time2);
     }
