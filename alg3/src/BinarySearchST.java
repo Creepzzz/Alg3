@@ -1,7 +1,3 @@
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import java.io.*;
 
 public class BinarySearchST<Key extends Comparable<Key>, Value> {
     private Key[] keys;
@@ -9,19 +5,44 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
     private int size = 0;
     private static final int CAPACITY = 2;
 
+    /**
+     * Constructor
+     */
     public BinarySearchST(){
         this(CAPACITY);
     }
 
+    /**
+     * Constructor
+     * @param capacity takes in max capacity to create finite arrays
+     */
     public BinarySearchST(int capacity){
         keys = (Key[]) new Comparable[capacity];
         values = (Value[]) new Object[capacity];
     }
 
+    /**
+     *
+     * @return true if the symbol table is empty
+     */
     public boolean isEmpty(){
         return size==0;
     }
 
+    /**
+     * Takes in a key and value pair in the right place.
+     * If the key is null an exception is thrown.
+     * If the value is null the key is deleted.
+     * We get the rank of the key and compare the key at
+     * given rank with the key we have. If they match we
+     * assign the value at that rank to the parameter value.
+     * The array of keys is resized if necessary.
+     * Every element in the key array is shifted one place
+     * due to the new key element.
+     * Th size of the symbol table is increased.
+     * @param key   the object to put into the symbol table
+     * @param value the value that pairs the key
+     */
     public void put(Key key, Value value){
         if(key == null){
             throw new IllegalArgumentException();
@@ -32,7 +53,6 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
             return;
         }
 
-        //Check if key is in tale
         int i = rank(key);
         if((i < size) && (keys[i].compareTo(key)==0)){
             values[i] = value;
@@ -52,6 +72,17 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         size++;
     }
 
+    /**
+     * Gets the rank of given key to delete.
+     * If the rank is outside of the limits of the table,
+     * if the key given doesn't match given rank or if the
+     * table is empty, return is called.
+     * Else, every key after given key is shifted one place
+     * to cover the place of the deleted key.
+     * Lastly, the size is decreased and last key and value is
+     * assigned null.
+     * @param key is the given object to delete
+     */
     public void delete(Key key){
         if(key == null){
             throw new IllegalArgumentException();
@@ -76,6 +107,18 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         }
     }
 
+    /**
+     * The search table is divided and the middle-key is
+     * compared to the key. If the middle-key is bigger
+     * than the given key we assign a new highest value
+     * below the previous middle. If the middle-key is
+     * smaller than given key we assign a new lowest value
+     * above the middle. This is done until the keys either match
+     * or the lowest value is assigned to the highest and which
+     * in both cases means we have found the value to return.
+     * @param key object we want to find the rank of
+     * @return    the rank of the given key
+     */
     public int rank(Key key){
         if(key == null){
             throw new IllegalArgumentException();
@@ -97,6 +140,10 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         return lo;
     }
 
+    /**
+     * Resizes the symbol table
+     * @param n is the wanted new size
+     */
     private void resize(int n){
         Key[] tempk = (Key[]) new Comparable[n];
         Value[] tempv = (Value[]) new Object[n];
@@ -109,6 +156,11 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         values = tempv;
     }
 
+    /**
+     *
+     * @param key is wanted object
+     * @return true if the key exists in the symbol table
+     */
     public boolean contains(Key key){
         if(key == null){
             throw new IllegalArgumentException();
@@ -116,6 +168,14 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         return get(key) != null;
     }
 
+    /**
+     * If key or value exists, the rank of wanted item
+     * is fetched. If this is within the limits of the
+     * table and if it matches the key in the symbol
+     * table, the value paired with the key is returned.
+     * @param key is wanted object
+     * @return value that pairs with key
+     */
     public Value get(Key key){
         if(key == null){
             throw new IllegalArgumentException();
@@ -129,5 +189,4 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         }
         return null;
     }
-
 }
