@@ -1,3 +1,15 @@
+/*
+Author: Matilda Qvick 001105-0606
+Generated: 21/9 - 2020
+Last updated: 28/9- 2020
+Solves: Creates a binary search symbol table where key-value
+        paris are put and accessed when needed. The class also
+        includes an iterator which one can use to iterate through
+        all the keys in the table.
+How to use: This class is only used in FrequencyCounter
+ */
+
+import java.util.NoSuchElementException;
 
 public class BinarySearchST<Key extends Comparable<Key>, Value> {
     private Key[] keys;
@@ -70,6 +82,7 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         keys[i] = key;
         values[i] = value;
         size++;
+        assert check();
     }
 
     /**
@@ -188,5 +201,96 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
             return values[i];
         }
         return null;
+    }
+
+    /**
+     * Constructor for iterable
+     * @return a sorted queue of keys
+     */
+    public Iterable<Key> keys() {
+        return keys(min(), max());
+    }
+
+    /**
+     * Creates a queue of the key-value pairs.
+     * The queue is sorted and all key value pairs are put in place
+     * @param lo is lowest index
+     * @param hi is highest index
+     * @return all keys from low to high index in an iterable queue
+     */
+    public Iterable<Key> keys(Key lo, Key hi) {
+        if (lo == null) throw new IllegalArgumentException("first argument to keys() is null");
+        if (hi == null) throw new IllegalArgumentException("second argument to keys() is null");
+
+        SortQueue<Key> queue = new SortQueue<Key>();
+        if (lo.compareTo(hi) > 0) return queue;
+        for (int i = rank(lo); i < rank(hi); i++)
+            queue.enqueue(keys[i]);
+        if (contains(hi)) queue.enqueue(keys[rank(hi)]);
+        return queue;
+    }
+
+    /**
+     * Checks if the array is sorted and
+     * if rank works correctly
+     * @return true if the array is sorted and rank correct
+     */
+    private boolean check() {
+        return isSorted() && rankCheck();
+    }
+
+    /**
+     * Checks if the array is sorted in ascending order
+     * @return true if it is sorted
+     */
+    private boolean isSorted() {
+        for (int i = 1; i < size; i++)
+            if (keys[i].compareTo(keys[i-1]) < 0) return false;
+        return true;
+    }
+
+    /**
+     * Checks if rank of selected item corresponds
+     * to index.
+     * Checks if the key at index i is corresponding
+     * to the item tied to that rank
+     * @return true if both of the above are true
+     */
+    private boolean rankCheck() {
+        for (int i = 0; i < size; i++)
+            if (i != rank(select(i))) return false;
+        for (int i = 0; i < size; i++)
+            if (keys[i].compareTo(select(rank(keys[i]))) != 0) return false;
+        return true;
+    }
+
+    /**
+     * Getter of an item of specific index
+     * @param k is given index
+     * @return key at index k in array
+     */
+    public Key select(int k) {
+        if (k < 0 || k >= size) {
+            throw new IllegalArgumentException("called select() with invalid argument: " + k);
+        }
+        return keys[k];
+    }
+
+    /**
+     *
+     * @return the last key in array
+     */
+    public Key max() {
+        if (isEmpty()) throw new NoSuchElementException("called max() with empty symbol table");
+        return keys[size-1];
+    }
+
+    /**
+     *
+     * @return the first key in array
+     */
+    public Key min() {
+        if (isEmpty()) throw new NoSuchElementException("called min() with empty symbol table");
+        return keys[0];
     }
 }

@@ -1,3 +1,5 @@
+import java.util.NoSuchElementException;
+
 public class SequentialSearchST<Key, Value> {
     private int numberOfPairs;
     private Node first;
@@ -15,6 +17,14 @@ public class SequentialSearchST<Key, Value> {
     }
 
     SequentialSearchST(){
+    }
+
+    public boolean isEmpty(){
+        return numberOfPairs==0;
+    }
+
+    private int size(){
+        return numberOfPairs;
     }
 
     public boolean contains(Key key){
@@ -40,5 +50,8 @@ public class SequentialSearchST<Key, Value> {
         first = new  Node(key, value, first);
         numberOfPairs++;
     }
+
+
+
 }
 

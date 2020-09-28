@@ -53,22 +53,26 @@ public class SeparateChainingHashST<Key, Value> {
     }
 
     public static void main(String[]args) throws FileNotFoundException {
-        SeparateChainingHashST<String, Integer> myST = new SeparateChainingHashST<>();
-        BinarySearchST<String, Integer> myST2 = new BinarySearchST<>();
-        String[] input = new String[141492];
+        SeparateChainingHashST<Integer, Integer> myST = new SeparateChainingHashST<>();
+        BinarySearchST<Integer, Integer> myST2 = new BinarySearchST<>();
+        Integer[] input = new Integer[141492];
         File myFile = new File("C:\\Users\\matil\\source\\repos\\Alg3\\Alg3\\destAlg3.txt");
         int numberOfWords = 0;
         Scanner scanner = new Scanner(myFile);
         while (scanner.hasNext()){
-            String key = scanner.next();
+            int key = scanner.next().hashCode();
             numberOfWords++;
-            myST.put(key, numberOfWords);
-            myST2.put(key, myST.hash(key));
+            if(myST2.contains(key)){
+               myST.put(key, numberOfWords);
+               myST2.put(key, myST.hash(key)+1);
+            }
             input[numberOfWords] = key;
         }
         for(int i = 1; i < numberOfWords; i++){
             System.out.println(i + " " + myST2.get(input[i]));
         }
+
+
 
     }
 }

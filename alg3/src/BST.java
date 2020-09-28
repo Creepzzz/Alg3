@@ -1,3 +1,18 @@
+/*
+Author: Matilda Qvick 001105-0606
+Generated: 21/9 - 2020
+Last updated: 28/9 - 2020
+Solves: Creates a binary search table with a root
+        and subtrees. The tree has nodes with a key-value
+        pair as well as a size. The size of a node is the
+        size of teh subtree underneath it.
+        The class uses an Iterable which creates an instance
+        of class SortQueue, this will create a queue
+        of all key-value pairs to iterate through.
+How to use: This class is only used in FrequencyCounter
+ */
+
+import java.util.NoSuchElementException;
 
 public class BST<Key extends Comparable<Key>, Value> {
     private Node root;
@@ -115,6 +130,7 @@ public class BST<Key extends Comparable<Key>, Value> {
         if(key == null) throw new IllegalArgumentException();
         if(value == null) return;
         root = put(root, key, value);
+        assert check();
     }
 
     /**
@@ -140,5 +156,210 @@ public class BST<Key extends Comparable<Key>, Value> {
         else n.value = value;
         n.size = 1 + size(n.left) + size(n.right);
         return n;
+    }
+
+
+    /**
+     * Constructor of Iterable of all keys
+     * @return a queue of all keys in the tree
+     */
+    public Iterable<Key> keys(){
+        if(isEmpty()) return new SortQueue<Key>();
+        return keys(min(), max());
+    }
+
+    /**
+     * Constructor of Iterable of all keys in symbol
+     * table from given range
+     * @param lo is lowest index
+     * @param hi is highest index
+     * @return an iterable of all keys within the indexes
+     */
+    public Iterable<Key> keys(Key lo, Key hi) {
+        if (lo == null) throw new IllegalArgumentException("first argument to keys() is null");
+        if (hi == null) throw new IllegalArgumentException("second argument to keys() is null");
+
+        SortQueue<Key> queue = new SortQueue<Key>();
+        keys(root, queue, lo, hi);
+        return queue;
+    }
+
+    /**
+     * Structures the tree according to a binary search tree
+     * Works recursively through comparisons, changing current
+     * node to the one to the right or the left until the right
+     * key to enqueue is found.
+     * @param x is current node
+     * @param queue is queue in which we save the keys in
+     * @param lo is the lowest index
+     * @param hi is the highest index
+     */
+    private void keys(Node x, SortQueue<Key> queue, Key lo, Key hi) {
+        if (x == null) return;
+        int cmplo = lo.compareTo(x.key);
+        int cmphi = hi.compareTo(x.key);
+        if (cmplo < 0) keys(x.left, queue, lo, hi);
+        if (cmplo <= 0 && cmphi >= 0) queue.enqueue(x.key);
+        if (cmphi > 0) keys(x.right, queue, lo, hi);
+    }
+
+    /**
+     * Calls other min node function
+     * @return the node to the most left
+     */
+    public Key min() {
+        if (isEmpty()) throw new NoSuchElementException("calls min() with empty symbol table");
+        return min(root).key;
+    }
+
+    /**
+     * Gets the mode to the most left
+     * @param x is current node
+     * @return the node to the most left
+     */
+    private Node min(Node x) {
+        if (x.left == null) return x;
+        else                return min(x.left);
+    }
+
+    /**
+     * Calls other max node function
+     * @return the node to the most right
+     */
+    public Key max() {
+        if (isEmpty()) throw new NoSuchElementException("calls max() with empty symbol table");
+        return max(root).key;
+    }
+
+    /**
+     * Gets the node to the most right
+     * @param x is current node
+     * @return node to the most right
+     */
+    private Node max(Node x) {
+        if (x.right == null) return x;
+        else                 return max(x.right);
+    }
+
+    /**
+     *
+     * @return true if tree is rightfully created and ordered
+     */
+    private boolean isBST() {
+        return isBST(root, null, null);
+    }
+
+    /**
+     * Iterates through the tree and sees that all the
+     * keys to the left is smaller and all the keys to
+     * the right is bigger.
+     * Method works recursively and checks the whole tree
+     * (both subtrees)
+     * @param x   is current node
+     * @param min is node to the most left
+     * @param max is node to the most right
+     * @return true if the tree is sorted as it should
+     */
+    private boolean isBST(Node x, Key min, Key max) {
+        if (x == null) return true;
+        if (min != null && x.key.compareTo(min) <= 0) return false;
+        if (max != null && x.key.compareTo(max) >= 0) return false;
+        return isBST(x.left, min, x.key) && isBST(x.right, x.key, max);
+    }
+
+    /**
+     *
+     * @return if the size of the tree stays consistent
+     */
+    private boolean isSizeConsistent() { return isSizeConsistent(root); }
+
+    /**
+     * Checks if the size of the three is all nodes
+     * in both subtree + the root.
+     * Method works recursively through the two subtrees
+     * @param x is current node
+     * @return true if the size stays consistent
+     */
+    private boolean isSizeConsistent(Node x) {
+        if (x == null) return true;
+        if (x.size != size(x.left) + size(x.right) + 1) return false;
+        return isSizeConsistent(x.left) && isSizeConsistent(x.right);
+    }
+
+    /**
+     *
+     * @return true if the right rank is returned
+     */
+    private boolean isRankConsistent() {
+        for (int i = 0; i < size(); i++)
+            if (i != rank(select(i))) return false;
+        for (Key key : keys())
+            if (key.compareTo(select(rank(key))) != 0) return false;
+        return true;
+    }
+
+    /**
+     * Getter of key at specific rank
+     * @param rank is wanted rank of key
+     * @return the key with that rank
+     */
+    public Key select(int rank) {
+        if (rank < 0 || rank >= size()) {
+            throw new IllegalArgumentException("argument to select() is invalid: " + rank);
+        }
+        return select(root, rank);
+    }
+
+    /**
+     * Moves recursively through the tree until the
+     * node with the right size/rank is found
+     * @param x    is current node
+     * @param rank is rank of wanted node
+     * @return the key of the right rank/size
+     */
+    private Key select(Node x, int rank) {
+        if (x == null) return null;
+        int leftSize = size(x.left);
+        if      (leftSize > rank) return select(x.left,  rank);
+        else if (leftSize < rank) return select(x.right, rank - leftSize - 1);
+        else                      return x.key;
+    }
+
+    /**
+     * Calls other rank method and sends in the root
+     * @param key is wanted key
+     * @return the rank of wanted key
+     */
+    public int rank(Key key) {
+        if (key == null) throw new IllegalArgumentException("argument to rank() is null");
+        return rank(key, root);
+    }
+
+    /**
+     * Moves recursively through the tree until the node
+     * with wanted key is found.
+     * Method works recursively through the tree until the node
+     * is found.
+     * @param key for wanted rank
+     * @param x is current node
+     * @return rank of the node with the given key
+     */
+    private int rank(Key key, Node x) {
+        if (x == null) return 0;
+        int cmp = key.compareTo(x.key);
+        if      (cmp < 0) return rank(key, x.left);
+        else if (cmp > 0) return 1 + size(x.left) + rank(key, x.right);
+        else              return size(x.left);
+    }
+
+    /**
+     * Tests for if the tree is built correctly
+     * @return true if it is
+     */
+    private boolean check() {
+        if (!isBST())            System.out.println("Not in symmetric order");
+        if (!isSizeConsistent()) System.out.println("Subtree counts not consistent");
+        if (!isRankConsistent()) System.out.println("Ranks not consistent");
+        return isBST() && isSizeConsistent() && isRankConsistent();
     }
 }
